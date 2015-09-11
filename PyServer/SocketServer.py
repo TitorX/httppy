@@ -106,9 +106,9 @@ class BaseRequestHandler:
 
     recv_num = 1024
 
-    def __init__(self, request, client_address, server):
+    def __init__(self, socket_request, client_address, server):
         self.data = ''
-        self.request = request
+        self.socket_request = socket_request
         self.client_address = client_address
         self.server = server
         self.setup()
@@ -123,7 +123,7 @@ class BaseRequestHandler:
 
     def recv(self):
         while True:
-            recv = self.request.recv(self.recv_num)
+            recv = self.socket_request.recv(self.recv_num)
             self.data += recv
             if len(recv) < self.recv_num:
                 break
@@ -132,7 +132,7 @@ class BaseRequestHandler:
         pass
 
     def finish(self):
-        self.request.close()
+        self.socket_request.close()
 
     def set_recv_num(self, num):
         self.recv_num = num
