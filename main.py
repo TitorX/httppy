@@ -1,23 +1,19 @@
-from PyServer import SocketServer, HTTPServer
+from PyServer import HTTPServer
 import thread
-import threading
 
 
 server_address = ('', 7777)
 
 
-class Handler(SocketServer.BaseRequestHandler):
+class Handler(HTTPServer.BaseHTTPHandler):
     def handle(self):
         print('Request from:' + str(self.client_address))
         print(self.data)
-        self.request.send(str(threading.activeCount()))
+        print(self.data.split('\r\n\r\n'))
+        print(len(self.data.split('\r\n\r\n')))
 
 
-class Handler1(HTTPServer.BaseHTTPHandler):
-    pass
-
-
-app = HTTPServer.BaseHTTPServer(server_address, Handler1)
+app = HTTPServer.BaseHTTPServer(server_address, Handler)
 thread.start_new_thread(app.server_start, ())
 raw_input()
 app.server_close()

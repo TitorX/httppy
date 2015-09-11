@@ -1,0 +1,31 @@
+/home/titorx/workspace/maizi/maizipy/bin/python /home/titorx/project/pyhttp/main.py
+Request from:('127.0.0.1', 34489)
+GET / HTTP/1.1
+Host: localhost:7777
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:40.0) Gecko/20100101 Firefox/40.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3
+Accept-Encoding: gzip, deflate
+Connection: keep-alive
+
+
+Request from:('127.0.0.1', 34490)
+GET /favicon.ico HTTP/1.1
+Host: localhost:7777
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:40.0) Gecko/20100101 Firefox/40.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3
+Accept-Encoding: gzip, deflate
+Connection: keep-alive
+
+
+Request from:('127.0.0.1', 34491)
+GET /favicon.ico HTTP/1.1
+Host: localhost:7777
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:40.0) Gecko/20100101 Firefox/40.0
+Accept: image/png,image/*;q=0.8,*/*;q=0.5
+Accept-Language: zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3
+Accept-Encoding: gzip, deflate
+Connection: keep-alive
+
+
