@@ -6,11 +6,7 @@ server_address = ('', 7777)
 
 
 class Handler(HTTPServer.BaseHTTPHandler):
-    def handle(self):
-        print('Request from:' + str(self.client_address))
-        print(self.data)
-        print(self.data.split('\r\n\r\n'))
-        print(len(self.data.split('\r\n\r\n')))
+    pass
 
 
 app = HTTPServer.BaseHTTPServer(server_address, Handler)
