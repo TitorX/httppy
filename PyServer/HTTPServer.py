@@ -16,6 +16,10 @@ class HTTPRequest:
         self.ip = ''
         self.port = None
         self.http_version = ''
+        self.method = ''
+        self.url = ''
+        self.get_string = ''
+        self.META = {}
 
 
 class HTTPResponse:
@@ -24,11 +28,16 @@ class HTTPResponse:
 
     def response(self):
         return '''HTTP/1.1 200 ok
-Content-type: text/html
 
 <html>
+<head>
+<meta charset="UTF-8">
+<title>欢迎</title>
+</head>
 <body>
-<h1>hello world</h1>
+<h1>中文</h1>
+<h1>にほんご</h1>
+<h1>한국어</h1>
 </body>
 </html>
 '''
@@ -42,7 +51,8 @@ class BaseHTTPHandler(BaseRequestHandler):
 
     def handle(self):
         self.parse_http()
-        print(self.http_request.header)
+        import json
+        print(json.dumps(self.http_request.META, indent=4))
         self.send_response()
 
     def parse_http(self):
@@ -53,6 +63,27 @@ class BaseHTTPHandler(BaseRequestHandler):
         header_len = self.data.find('\r\n\r\n')
         self.http_request.header = self.data[:header_len]
         self.http_request.body = self.data[header_len + 4:]
+
+        self.parse_header()
+
+    def parse_header(self):
+        header_lines = self.http_request.header.splitlines()
+
+        # 解析请求行
+        request_line = header_lines[0]
+        request_line = request_line.split()
+        self.http_request.method = request_line[0]
+        if '?' in request_line:
+            self.http_request.url, self.http_request.get_string = request_line[1].split('?')
+        else:
+            self.http_request.url = request_line[1]
+            self.http_request.get_string = ''
+        self.http_request.http_version = request_line[2]
+
+        # 解析报文首部
+        for one_line in header_lines[1:]:
+            meta = one_line.split(': ')
+            self.http_request.META[meta[0].upper()] = meta[1]
 
     def send_response(self):
         self.socket_request.sendall(self.http_response.response())

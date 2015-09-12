@@ -1,5 +1,6 @@
 from PyServer import HTTPServer
 import thread
+import BaseHTTPServer
 
 
 server_address = ('', 7777)
