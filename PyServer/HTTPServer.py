@@ -20,6 +20,7 @@ class HTTPRequest:
         self.url = ''
         self.get_string = ''
         self.META = {}
+        self.FILE = {}
 
 
 class HTTPResponse:
@@ -51,9 +52,12 @@ class BaseHTTPHandler(BaseRequestHandler):
 
     def handle(self):
         self.parse_http()
-        import json
-        print(json.dumps(self.http_request.META, indent=4))
+        self.handle_request()
         self.send_response()
+
+    def handle_request(self):
+        """ 由用户进行重载 对http request进行处理 """
+        pass
 
     def parse_http(self):
         # 获取客户端的ip port
