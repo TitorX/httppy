@@ -20,6 +20,8 @@ class HTTPRequest:
         self.url = ''
         self.get_string = ''
         self.META = {}
+        self.GET = {}
+        self.POST = {}
         self.FILE = {}
 
 
@@ -69,6 +71,9 @@ class BaseHTTPHandler(BaseRequestHandler):
         self.http_request.body = self.data[header_len + 4:]
 
         self.parse_header()
+        self.parse_get()
+        self.parse_post()
+        self.parse_cookie()
 
     def parse_header(self):
         header_lines = self.http_request.header.splitlines()
@@ -77,17 +82,30 @@ class BaseHTTPHandler(BaseRequestHandler):
         request_line = header_lines[0]
         request_line = request_line.split()
         self.http_request.method = request_line[0]
-        if '?' in request_line:
-            self.http_request.url, self.http_request.get_string = request_line[1].split('?')
-        else:
-            self.http_request.url = request_line[1]
-            self.http_request.get_string = ''
+
+        request = request_line[1].split('?')
+        request.append('')
+        self.http_request.url, self.http_request.get_string = request[0], request[1]
+
         self.http_request.http_version = request_line[2]
 
         # 解析报文首部
         for one_line in header_lines[1:]:
             meta = one_line.split(': ')
             self.http_request.META[meta[0].upper()] = meta[1]
+
+    def parse_get(self):
+        if self.http_request.get_string:
+            for get_string in self.http_request.get_string.split('&'):
+                get = get_string.split('=')
+                get.append('')
+                self.http_request.GET[get[0]] = get[1]
+
+    def parse_post(self):
+        pass
+
+    def parse_cookie(self):
+        pass
 
     def send_response(self):
         self.socket_request.sendall(self.http_response.response())
