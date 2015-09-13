@@ -22,6 +22,7 @@ class HTTPRequest:
         self.get_string = ''
         self.META = {}
         self.GET = {}
+        self.COOKIE = {}
         self.POST = {}
         self.FILE = {}
 
@@ -74,8 +75,8 @@ class BaseHTTPHandler(BaseRequestHandler):
 
         self.parse_header()
         self.parse_get()
-        self.parse_post()
         self.parse_cookie()
+        self.parse_post()
 
     def parse_header(self):
         header_lines = self.http_request.header.splitlines()
@@ -103,10 +104,14 @@ class BaseHTTPHandler(BaseRequestHandler):
                 get.append('')
                 self.http_request.GET[get[0]] = get[1]
 
-    def parse_post(self):
-        pass
-
     def parse_cookie(self):
+        cookie_string = self.http_request.META.get('COOKIE', '')
+        if cookie_string:
+            for cookies in cookie_string.split('; '):
+                cookie = cookies.split('=')
+                self.http_request.COOKIE[cookie[0]] = cookie[1]
+
+    def parse_post(self):
         pass
 
     def send_response(self):

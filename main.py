@@ -13,7 +13,7 @@ class Handler(HTTPServer.BaseHTTPHandler):
         import json
         print(json.dumps(self.http_request.META, indent=4))
         print(json.dumps(self.http_request.GET, indent=4))
-        print(self.http_request.body)
+        print(json.dumps(self.http_request.COOKIE, indent=4))
 
 
 app = HTTPServer.BaseHTTPServer(server_address, Handler)
