@@ -76,7 +76,8 @@ class BaseHTTPHandler(BaseRequestHandler):
         self.parse_header()
         self.parse_get()
         self.parse_cookie()
-        self.parse_post()
+        if self.http_request.method == 'POST':
+            self.parse_post()
 
     def parse_header(self):
         header_lines = self.http_request.header.splitlines()
@@ -87,6 +88,7 @@ class BaseHTTPHandler(BaseRequestHandler):
         self.http_request.method = request_line[0]
 
         request = request_line[1].split('?')
+        # 当url中没有?时 如:/index/index 添加一个''使get_string为''
         request.append('')
         self.http_request.url, self.http_request.get_string = request[0], urllib.unquote(request[1])
 
@@ -101,6 +103,7 @@ class BaseHTTPHandler(BaseRequestHandler):
         if self.http_request.get_string:
             for get_string in self.http_request.get_string.split('&'):
                 get = get_string.split('=')
+                # 当出现get参数没写完整的情况时 如:?a&b=1 添加一个''使不完整的参数赋值为''
                 get.append('')
                 self.http_request.GET[get[0]] = get[1]
 
@@ -112,7 +115,15 @@ class BaseHTTPHandler(BaseRequestHandler):
                 self.http_request.COOKIE[cookie[0]] = cookie[1]
 
     def parse_post(self):
-        pass
+        content_type = self.http_request.META.get('CONTENT-TYPE', '')
+        if 'multipart/form-data' in content_type:
+            pass
+        else:
+            content_length = int(self.http_request.META.get('CONTENT-LENGTH', -1)) + 1
+            body = urllib.unquote(self.http_request.body[:content_length])
+            for posts in body.split('&'):
+                post = posts.split('=')
+                self.http_request.POST[post[0]] = post[1]
 
     def send_response(self):
         self.socket_request.sendall(self.http_response.response())

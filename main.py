@@ -1,7 +1,5 @@
 from PyServer import HTTPServer
 import thread
-import urllib
-import urllib2
 
 
 server_address = ('', 7777)
@@ -12,8 +10,7 @@ class Handler(HTTPServer.BaseHTTPHandler):
         print(self.data)
         import json
         print(json.dumps(self.http_request.META, indent=4))
-        print(json.dumps(self.http_request.GET, indent=4))
-        print(json.dumps(self.http_request.COOKIE, indent=4))
+        print(json.dumps(self.http_request.POST, indent=4))
 
 
 app = HTTPServer.BaseHTTPServer(server_address, Handler)

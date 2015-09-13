@@ -15,5 +15,4 @@
 
 > HTTP server
 >> HTTP内容解析
->>> 对HTTP报文主体进行解析
->>> POST 解析
+>>> 解析上传文件的POST参数
