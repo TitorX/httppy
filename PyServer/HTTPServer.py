@@ -4,6 +4,7 @@ __author__ = 'titorx'
 
 from SocketServer import BaseRequestHandler, ThreadingTCPServer
 import urllib
+import StringIO
 
 
 class BaseHTTPServer(ThreadingTCPServer):
@@ -117,8 +118,40 @@ class BaseHTTPHandler(BaseRequestHandler):
     def parse_post(self):
         content_type = self.http_request.META.get('CONTENT-TYPE', '')
         content_length = int(self.http_request.META.get('CONTENT-LENGTH', -1)) + 1
+
         if 'multipart/form-data' in content_type:
             boundary = content_type.split('; ')[1].split('=')[1]
+            chunks = self.http_request.body.split('--' + boundary)[1:-1]
+            for chunk in chunks:
+                chunk_header_len = chunk.find('\r\n\r\n')
+                chunk_header = chunk[:chunk_header_len]
+                # [:-2] 截取掉末尾的\r\n
+                chunk_body = chunk[chunk_header_len + 4:-2]
+                chunk_meta = {}
+
+                # 解析chunk header
+                for header_line in chunk_header.splitlines():
+                    if header_line:
+                        header_line = header_line.split('; ')
+
+                        meta = header_line[0].split(': ')
+                        chunk_meta[meta[0].upper()] = meta[1]
+
+                        if len(header_line) > 1:
+                            for header in header_line[1:]:
+                                meta = header.split('=')
+                                chunk_meta[meta[0]] = meta[1].strip('\"')
+
+                # 解析 chunk body
+                if not chunk_meta.get('CONTENT-TYPE', ''):
+                    self.http_request.POST[chunk_meta['name']] = chunk_body
+                else:
+                    self.http_request.FILE[chunk_meta['name']] = {
+                        'CONTENT-TYPE': chunk_meta['CONTENT-TYPE'],
+                        'filename': StringIO.StringIO(chunk_meta['filename']),
+                        'content': chunk_body
+                    }
+
         else:
             body = urllib.unquote(self.http_request.body[:content_length])
             for posts in body.split('&'):

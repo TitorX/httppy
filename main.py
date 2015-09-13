@@ -9,7 +9,6 @@ class Handler(HTTPServer.BaseHTTPHandler):
     def handle_request(self):
         print(self.data)
         import json
-        print(json.dumps(self.http_request.META, indent=4))
         print(json.dumps(self.http_request.POST, indent=4))
 
 
