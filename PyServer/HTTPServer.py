@@ -3,6 +3,7 @@ __author__ = 'titorx'
 
 
 from SocketServer import BaseRequestHandler, ThreadingTCPServer
+import urllib
 
 
 class BaseHTTPServer(ThreadingTCPServer):
@@ -31,6 +32,7 @@ class HTTPResponse:
 
     def response(self):
         return '''HTTP/1.1 200 ok
+Set-Cookie: a=中文Cookie; path=/;
 
 <html>
 <head>
@@ -77,7 +79,7 @@ class BaseHTTPHandler(BaseRequestHandler):
 
     def parse_header(self):
         header_lines = self.http_request.header.splitlines()
-
+        print(self.http_request.header)
         # 解析请求行
         request_line = header_lines[0]
         request_line = request_line.split()
@@ -85,7 +87,7 @@ class BaseHTTPHandler(BaseRequestHandler):
 
         request = request_line[1].split('?')
         request.append('')
-        self.http_request.url, self.http_request.get_string = request[0], request[1]
+        self.http_request.url, self.http_request.get_string = request[0], urllib.unquote(request[1])
 
         self.http_request.http_version = request_line[2]
 
