@@ -116,10 +116,10 @@ class BaseHTTPHandler(BaseRequestHandler):
 
     def parse_post(self):
         content_type = self.http_request.META.get('CONTENT-TYPE', '')
+        content_length = int(self.http_request.META.get('CONTENT-LENGTH', -1)) + 1
         if 'multipart/form-data' in content_type:
-            pass
+            boundary = content_type.split('; ')[1].split('=')[1]
         else:
-            content_length = int(self.http_request.META.get('CONTENT-LENGTH', -1)) + 1
             body = urllib.unquote(self.http_request.body[:content_length])
             for posts in body.split('&'):
                 post = posts.split('=')
