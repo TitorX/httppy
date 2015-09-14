@@ -32,7 +32,7 @@ class HTTPResponse:
     def __init__(self):
         # self.request = http_request
         self.http_version = 'HTTP/1.1'
-        self.status = '200 OK'
+        self.status = '200'
         self.header = ''
         self.body = ''
         self.META = {

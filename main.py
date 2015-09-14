@@ -9,7 +9,8 @@ class Handler(HTTPServer.BaseHTTPHandler):
     def handle_request(self):
         self.http_response.body = 'hello world!'
         import json
-        print(json.dumps(self.http_request.POST, indent=4))
+        print('POST:' + json.dumps(self.http_request.POST, indent=4))
+        print('GET:' + json.dumps(self.http_request.GET, indent=4))
 
 
 app = HTTPServer.BaseHTTPServer(server_address, Handler)
