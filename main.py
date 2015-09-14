@@ -8,7 +8,6 @@ server_address = ('', 7777)
 class Handler(HTTPServer.BaseHTTPHandler):
     def handle_request(self):
         self.http_response.body = 'hello world!'
-        print(self.data)
         import json
         print(json.dumps(self.http_request.POST, indent=4))
 

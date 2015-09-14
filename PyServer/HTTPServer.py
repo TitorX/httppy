@@ -157,8 +157,8 @@ class BaseHTTPHandler(BaseRequestHandler):
                 else:
                     self.http_request.FILE[chunk_meta['name']] = {
                         'CONTENT-TYPE': chunk_meta['CONTENT-TYPE'],
-                        'filename': StringIO.StringIO(chunk_meta['filename']),
-                        'content': chunk_body
+                        'filename': chunk_meta['filename'],
+                        'content': StringIO.StringIO(chunk_body)
                     }
 
         else:
