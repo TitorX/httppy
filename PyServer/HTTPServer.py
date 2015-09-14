@@ -30,24 +30,34 @@ class HTTPRequest:
 
 class HTTPResponse:
     def __init__(self):
-        self.status = ''
+        # self.request = http_request
+        self.http_version = 'HTTP/1.1'
+        self.status = '200 OK'
+        self.header = ''
+        self.body = ''
+        self.META = {
+            'Server': 'PyHTTPServer/0.1'
+        }
 
-    def response(self):
-        return '''HTTP/1.1 200 ok
-Set-Cookie: a=中文Cookie; path=/;
+    def set_header(self, key, value):
+        self.META[key] = value
 
-<html>
-<head>
-<meta charset="UTF-8">
-<title>欢迎</title>
-</head>
-<body>
-<h1>中文</h1>
-<h1>にほんご</h1>
-<h1>한국어</h1>
-</body>
-</html>
-'''
+    # def set_cookie(self, key, value):
+    #     if 'Set-Cookie' in self.META:
+    #         self.META['Set-Cookie'] += ''
+    #     else:
+    #         self.META['Set-Cookie'] = ''
+
+    def make_header(self):
+        self.header = '\r\n'.join([key + ': ' + value for key, value in self.META.iteritems()])
+
+    def get_response(self):
+        """ 该方法返回一个字符串形式的http响应 """
+        self.make_header()
+
+        response_line = ' '.join([self.http_version, self.status])
+        response = response_line + '\r\n' + self.header + '\r\n\r\n' + self.body
+        return response
 
 
 class BaseHTTPHandler(BaseRequestHandler):
@@ -82,7 +92,6 @@ class BaseHTTPHandler(BaseRequestHandler):
 
     def parse_header(self):
         header_lines = self.http_request.header.splitlines()
-        print(self.http_request.header)
         # 解析请求行
         request_line = header_lines[0]
         request_line = request_line.split()
@@ -159,4 +168,4 @@ class BaseHTTPHandler(BaseRequestHandler):
                 self.http_request.POST[post[0]] = post[1]
 
     def send_response(self):
-        self.socket_request.sendall(self.http_response.response())
+        self.socket_request.sendall(self.http_response.get_response())
