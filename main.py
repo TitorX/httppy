@@ -11,6 +11,7 @@ class Handler(HTTPServer.BaseHTTPHandler):
         import json
         print('POST:' + json.dumps(self.http_request.POST, indent=4))
         print('GET:' + json.dumps(self.http_request.GET, indent=4))
+        self.http_response.set_cookie('test', '123')
 
 
 app = HTTPServer.BaseHTTPServer(server_address, Handler)
