@@ -97,13 +97,10 @@ class HTTPResponse:
                 self.COOKIE[key] += ' domain=%s;' % domain
 
         def get_set_cookie_meta(self):
-            """
-            返回 (Set-Cookie, xxx) 形式的元组,用于后续响应头部信息
-            """
             if self.COOKIE:
-                set_cookie = [i for i in self.COOKIE.values()]
+                set_cookie = ['Set-Cookie: ' + i for i in self.COOKIE.values()]
                 set_cookie_string = '\r\n'.join(set_cookie)
-                return 'Set-Cookie', set_cookie_string
+                return set_cookie_string
             else:
                 return None
 
@@ -124,11 +121,11 @@ class HTTPResponse:
         self.cookie.set_cookie(key, value, expires, path, domain)
 
     def make_header(self):
-        set_cookie_meta = self.cookie.get_set_cookie_meta()
-        if set_cookie_meta:
-            self.META[set_cookie_meta[0]] = set_cookie_meta[1]
-
-        self.header = '\r\n'.join([key + ': ' + value for key, value in self.META.iteritems()])
+        headers = [key + ': ' + value for key, value in self.META.iteritems()]
+        set_cookie = self.cookie.get_set_cookie_meta()
+        if set_cookie:
+            headers.append(set_cookie)
+        self.header = '\r\n'.join(headers)
 
     def get_response(self):
         """ 该方法返回一个字符串形式的http响应 """
