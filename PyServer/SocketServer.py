@@ -31,6 +31,7 @@ class BaseTCPServer:
         self.request_handler_class = request_handler_class
 
         self.socket = socket.socket()
+        self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
         self.server_bind()
         self.server_listen()

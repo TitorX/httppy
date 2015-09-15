@@ -5,6 +5,7 @@ __author__ = 'titorx'
 from SocketServer import BaseRequestHandler, ThreadingTCPServer
 import urllib
 import StringIO
+import datetime
 
 
 class BaseHTTPServer(ThreadingTCPServer):
@@ -79,22 +80,21 @@ class HTTPResponse:
 
         def __init__(self):
             self.COOKIE = {}
-            self.domain = None
-            self.expires = None
-            self.path = None
 
         def set_cookie(self, key, value, expires, path, domain):
             """
-            设置cookie 最后一次设置的path domain生效
+            设置cookie
             """
-            self.domain = domain
-            self.path = path
 
-            self.COOKIE[key] = '='.join([key, value])
+            self.COOKIE[key] = '='.join([key, value]) + ';'
+
             if expires:
-                self.COOKIE[key] += ', expires=%s;' % 'time'
-            else:
-                self.COOKIE[key] += ';'
+                expires = (datetime.datetime.utcnow() + datetime.timedelta(seconds=expires))
+                self.COOKIE[key] += ' expires=%s;' % expires.strftime('%a, %d %b %Y %H:%M:%S UTC')
+            if path:
+                self.COOKIE[key] += ' path=%s;' % path
+            if domain:
+                self.COOKIE[key] += ' domain=%s;' % domain
 
         def get_set_cookie_meta(self):
             """
@@ -102,12 +102,7 @@ class HTTPResponse:
             """
             if self.COOKIE:
                 set_cookie = [i for i in self.COOKIE.values()]
-                if self.path:
-                    set_cookie.append('path=%s;' % self.path)
-                if self.domain:
-                    set_cookie.append('domain=%s;' % self.domain)
-
-                set_cookie_string = ' '.join(set_cookie)
+                set_cookie_string = '\r\n'.join(set_cookie)
                 return 'Set-Cookie', set_cookie_string
             else:
                 return None
