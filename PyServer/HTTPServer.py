@@ -28,37 +28,37 @@ class HTTPRequest:
         self.FILE = {}
 
 
-class Cookie:
-    def __init__(self):
-        self.COOKIE = {}
-        self.domain = None
-        self.expires = None
-        self.path = None
-
-    def set_cookie(self, key, value, expires=None, domain=None):
-        self.domain = domain
-
-        self.COOKIE[key] = '='.join([key, value])
-        if expires:
-            self.COOKIE[key] += ', expires=%s;' % 'time'
-        else:
-            self.COOKIE[key] += ';'
-
-    def get_cookie_meta(self):
-        if self.COOKIE:
-            set_cookie = [i for i in self.COOKIE.values()]
-            if self.path:
-                set_cookie.append('path=%s;' % self.path)
-            if self.domain:
-                set_cookie.append('domain=%s;' % self.domain)
-
-            set_cookie_string = ' '.join(set_cookie)
-            return 'Set-Cookie', set_cookie_string
-        else:
-            return None
-
-
 class HTTPResponse:
+
+    class _Cookie:
+        def __init__(self):
+            self.COOKIE = {}
+            self.domain = None
+            self.expires = None
+            self.path = None
+
+        def set_cookie(self, key, value, expires, domain):
+            self.domain = domain
+
+            self.COOKIE[key] = '='.join([key, value])
+            if expires:
+                self.COOKIE[key] += ', expires=%s;' % 'time'
+            else:
+                self.COOKIE[key] += ';'
+
+        def get_set_cookie_meta(self):
+            if self.COOKIE:
+                set_cookie = [i for i in self.COOKIE.values()]
+                if self.path:
+                    set_cookie.append('path=%s;' % self.path)
+                if self.domain:
+                    set_cookie.append('domain=%s;' % self.domain)
+
+                set_cookie_string = ' '.join(set_cookie)
+                return 'Set-Cookie', set_cookie_string
+            else:
+                return None
+
     def __init__(self):
         self.http_version = 'HTTP/1.1'
         self.status = '200'
@@ -67,7 +67,7 @@ class HTTPResponse:
         self.META = {
             'Server': 'PyHTTPServer/0.1'
         }
-        self.cookie = Cookie()
+        self.cookie = self._Cookie()
 
     def set_header(self, key, value):
         self.META[key] = value
@@ -76,7 +76,7 @@ class HTTPResponse:
         self.cookie.set_cookie(key, value, expires, domain)
 
     def make_header(self):
-        set_cookie_meta = self.cookie.get_cookie_meta()
+        set_cookie_meta = self.cookie.get_set_cookie_meta()
         if set_cookie_meta:
             self.META[set_cookie_meta[0]] = set_cookie_meta[1]
 
