@@ -12,6 +12,42 @@ class BaseHTTPServer(ThreadingTCPServer):
 
 
 class HTTPRequest:
+
+    """
+    http请求对象 每个浏览器发送到服务器的请求对应生成一个HTTPRequest对象
+
+    header 原始报文首部
+    body 原始报文主体
+    ip port 发起请求者的ip port
+    http_version 请求使用的http版本
+    method 请求方法
+
+    url 请求的url
+    get_string 请求的get部分字符串
+        url?get_string 原始的完整请求url
+
+    META 字典(dict)形式的解析后的报文首部
+        首部字段的key全部转化为大写(.upper())
+        如:
+            self.META = {
+                'CONNECTION': 'keep-alive'
+            }
+
+    GET 字典(dict)形式的解析后的get参数
+    COOKIE 字典(dict)形式的解析后的cookie参数
+    POST 字典(dict)形式的解析后的post参数
+
+    FILE 字典(dict)形式的解析后的上传文件
+        self.FILE = {
+            'file1': {
+                'CONTENT-TYPE': 'image/jpeg',
+                'filename': 'test.jpg',
+                'content': StringIO.StringIO(文件二进制)
+            }
+        }
+
+    """
+
     def __init__(self):
         self.header = ''
         self.body = ''
@@ -30,15 +66,29 @@ class HTTPRequest:
 
 class HTTPResponse:
 
+    """
+    对http请求的响应对象
+
+    """
+
     class _Cookie:
+
+        """
+        用于cookie处理
+        """
+
         def __init__(self):
             self.COOKIE = {}
             self.domain = None
             self.expires = None
             self.path = None
 
-        def set_cookie(self, key, value, expires, domain):
+        def set_cookie(self, key, value, expires, path, domain):
+            """
+            设置cookie 最后一次设置的path domain生效
+            """
             self.domain = domain
+            self.path = path
 
             self.COOKIE[key] = '='.join([key, value])
             if expires:
@@ -47,6 +97,9 @@ class HTTPResponse:
                 self.COOKIE[key] += ';'
 
         def get_set_cookie_meta(self):
+            """
+            返回 (Set-Cookie, xxx) 形式的元组,用于后续响应头部信息
+            """
             if self.COOKIE:
                 set_cookie = [i for i in self.COOKIE.values()]
                 if self.path:
@@ -72,8 +125,8 @@ class HTTPResponse:
     def set_header(self, key, value):
         self.META[key] = value
 
-    def set_cookie(self, key, value, expires=None, domain=None):
-        self.cookie.set_cookie(key, value, expires, domain)
+    def set_cookie(self, key, value, expires=None, path=None, domain=None):
+        self.cookie.set_cookie(key, value, expires, path, domain)
 
     def make_header(self):
         set_cookie_meta = self.cookie.get_set_cookie_meta()
@@ -92,6 +145,13 @@ class HTTPResponse:
 
 
 class BaseHTTPHandler(BaseRequestHandler):
+
+    """
+    进行HTTP协议的解析
+    self.http_request 请求对象
+    self.http_response 响应对象
+    """
+
     def __init__(self, socket_request, client_address, server):
         self.http_request = HTTPRequest()
         self.http_response = HTTPResponse()
@@ -107,6 +167,7 @@ class BaseHTTPHandler(BaseRequestHandler):
         pass
 
     def parse_http(self):
+        """ 解析http """
         # 获取客户端的ip port
         self.http_request.ip, self.http_request.port = self.client_address
 
@@ -122,6 +183,7 @@ class BaseHTTPHandler(BaseRequestHandler):
             self.parse_post()
 
     def parse_header(self):
+        """ 解析请求行以及请求头部 """
         header_lines = self.http_request.header.splitlines()
         # 解析请求行
         request_line = header_lines[0]
@@ -141,6 +203,7 @@ class BaseHTTPHandler(BaseRequestHandler):
             self.http_request.META[meta[0].upper()] = meta[1]
 
     def parse_get(self):
+        """ 解析get参数 """
         if self.http_request.get_string:
             for get_string in self.http_request.get_string.split('&'):
                 get = get_string.split('=')
@@ -149,6 +212,7 @@ class BaseHTTPHandler(BaseRequestHandler):
                 self.http_request.GET[get[0]] = get[1]
 
     def parse_cookie(self):
+        """ 解析cookie参数 """
         cookie_string = self.http_request.META.get('COOKIE', '')
         if cookie_string:
             for cookies in cookie_string.split('; '):
@@ -156,6 +220,7 @@ class BaseHTTPHandler(BaseRequestHandler):
                 self.http_request.COOKIE[cookie[0]] = cookie[1]
 
     def parse_post(self):
+        """ 解析post得到的参数以及文件 """
         content_type = self.http_request.META.get('CONTENT-TYPE', '')
         content_length = int(self.http_request.META.get('CONTENT-LENGTH', -1)) + 1
 
