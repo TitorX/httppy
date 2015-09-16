@@ -48,12 +48,12 @@ class BaseTCPServer:
     def server_start(self):
         """ 开启服务 """
         while self.server_loop:
-            self.handle_request()
+            socket_request, client_address = self.get_request()
+            self.handle_socket_request(socket_request, client_address)
 
-    def handle_request(self):
+    def handle_socket_request(self, socket_request, client_address):
         """ 处理请求 """
-        request, client_address = self.get_request()
-        self.request_handler_class(request, client_address, self)
+        self.request_handler_class(socket_request, client_address, self)
 
     def get_request(self):
         """ 获取连接 """
@@ -90,15 +90,15 @@ class ThreadingTCPServer(BaseTCPServer):
         BaseTCPServer.__init__(self, server_address, request_handler_class)
 
         class _TreadingHandler(threading.Thread):
-            def __init__(self, request, client_address, server):
+            def __init__(self, socket_request, client_address, server):
                 threading.Thread.__init__(self)
-                self.request = request
+                self.socket_request = socket_request
                 self.client_address = client_address
                 self.server = server
                 self.start()
 
             def run(self):
-                request_handler_class(self.request, self.client_address, self.server)
+                request_handler_class(self.socket_request, self.client_address, self.server)
 
         self. request_handler_class = _TreadingHandler
 

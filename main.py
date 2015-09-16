@@ -1,20 +1,27 @@
+# coding=utf-8
 from httppy import httpserver
-import threading
+import thread
 
 server_address = ('', 7777)
 
 
 class Handler(httpserver.BaseHttpHandler):
     def handle_http_request(self):
+        # import time
+        # time.sleep(1)
         self.http_response.body = 'hello world!'
-        import json
-        print('POST:' + json.dumps(self.http_request.POST, indent=4))
-        print('GET:' + json.dumps(self.http_request.GET, indent=4))
-        self.http_response.set_cookie('test1', '123', expires=10)
-        self.http_response.set_cookie('test2', '123', expires=10)
+        print(self.http_request.ip)
+        # import json
+        # print('POST:' + json.dumps(self.http_request.POST, indent=4))
+        # print('GET:' + json.dumps(self.http_request.GET, indent=4))
+        # self.http_response.set_cookie('test1', '123', expires=10)
+        # self.http_response.set_cookie('test2', '123', expires=10)
 
 
 app = httpserver.BaseHttpServer(server_address, Handler)
-t = threading.Thread(target=app.server_start)
-t.start()
-t.join()
+
+thread.start_new_thread(app.server_start, ())
+
+print('Server start')
+print(server_address)
+raw_input()

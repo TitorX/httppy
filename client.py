@@ -25,15 +25,23 @@ def con(name):
     #
     # ''')
     max_len = 1024
-    d = s.recv(max_len)
-    print d
+    s.recv(max_len)
     s.close()
     ok += 1
 
 threads = []
 start = time.time()
-for i in range(1000):
-    t = threading.Thread(target=con, args=(str(i),))
+for i in range(10000):
+    t = threading.Thread(target=con, args=('''GET / HTTP/1.1
+Host: localhost:7777
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:40.0) Gecko/20100101 Firefox/40.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3
+Accept-Encoding: gzip, deflate
+Connection: keep-alive
+Cache-Control: max-age=0
+
+''',))
     threads.append(t)
     t.start()
 
