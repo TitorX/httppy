@@ -110,7 +110,7 @@ class HttpResponse:
         self.header = ''
         self.body = ''
         self.META = {
-            'Server': 'PyHTTPServer/0.1'
+            'Server': 'httppy/0.1'
         }
         self.cookie = self._Cookie()
 
