@@ -2,17 +2,17 @@
 __author__ = 'titorx'
 
 
-from SocketServer import BaseRequestHandler, ThreadingTCPServer
+from socketserver import BaseSocketHandler, ThreadingTCPServer
 import urllib
 import StringIO
 import datetime
 
 
-class BaseHTTPServer(ThreadingTCPServer):
+class BaseHttpServer(ThreadingTCPServer):
     pass
 
 
-class HTTPRequest:
+class HttpRequest:
 
     """
     http请求对象 每个浏览器发送到服务器的请求对应生成一个HTTPRequest对象
@@ -65,7 +65,7 @@ class HTTPRequest:
         self.FILE = {}
 
 
-class HTTPResponse:
+class HttpResponse:
 
     """
     对http请求的响应对象
@@ -136,7 +136,7 @@ class HTTPResponse:
         return response
 
 
-class BaseHTTPHandler(BaseRequestHandler):
+class BaseHttpHandler(BaseSocketHandler):
 
     """
     进行HTTP协议的解析
@@ -145,16 +145,16 @@ class BaseHTTPHandler(BaseRequestHandler):
     """
 
     def __init__(self, socket_request, client_address, server):
-        self.http_request = HTTPRequest()
-        self.http_response = HTTPResponse()
-        BaseRequestHandler.__init__(self, socket_request, client_address, server)
+        self.http_request = HttpRequest()
+        self.http_response = HttpResponse()
+        BaseSocketHandler.__init__(self, socket_request, client_address, server)
 
-    def handle(self):
+    def handle_socket_request(self):
         self.parse_http()
-        self.handle_request()
-        self.send_response()
+        self.handle_http_request()
+        self.send_http_response()
 
-    def handle_request(self):
+    def handle_http_request(self):
         """ 由用户进行重载 对http request进行处理 """
         pass
 
@@ -255,5 +255,5 @@ class BaseHTTPHandler(BaseRequestHandler):
                 post = posts.split('=')
                 self.http_request.POST[post[0]] = post[1]
 
-    def send_response(self):
+    def send_http_response(self):
         self.socket_request.sendall(self.http_response.get_response())

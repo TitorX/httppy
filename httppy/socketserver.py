@@ -103,7 +103,7 @@ class ThreadingTCPServer(BaseTCPServer):
         self. request_handler_class = _TreadingHandler
 
 
-class BaseRequestHandler:
+class BaseSocketHandler:
 
     recv_num = 1024
 
@@ -115,7 +115,7 @@ class BaseRequestHandler:
         self.setup()
         try:
             self.recv()
-            self.handle()
+            self.handle_socket_request()
         finally:
             self.finish()
 
@@ -129,7 +129,7 @@ class BaseRequestHandler:
             if len(recv) < self.recv_num:
                 break
 
-    def handle(self):
+    def handle_socket_request(self):
         pass
 
     def finish(self):
