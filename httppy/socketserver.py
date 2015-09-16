@@ -60,10 +60,13 @@ class BaseTCPServer:
 
     def server_stop(self):
         """ 停止服务 """
+        s = socket.socket()
+        s.connect(self.server_address)
+        s.close()
         self.server_loop = False
 
     def server_close(self):
-        """ 关闭套接字 """
+        """ 关闭服务 """
         self.server_stop()
         self.socket.close()
 
@@ -115,12 +118,13 @@ class TreadPoolTCPServer(BaseTCPServer):
         self.thread_pool = []
 
         class _Handler(threading.Thread):
-            def __init__(self, signal, server):
+            def __init__(self, work_signal, server):
                 threading.Thread.__init__(self)
-                self.signal = signal
+                self.work_signal = work_signal
                 self.server = server
                 self.socket_request = None
                 self.client_address = None
+                self.setDaemon(True)
                 self.start()
 
             def set_socket_request(self, socket_request, client_address):
@@ -129,7 +133,7 @@ class TreadPoolTCPServer(BaseTCPServer):
 
             def run(self):
                 while True:
-                    self.signal.wait()
+                    self.work_signal.wait()
                     try:
                         request_handler_class(self.socket_request, self.client_address, self.server)
                         self.socket_request = None
@@ -137,19 +141,25 @@ class TreadPoolTCPServer(BaseTCPServer):
                     except Exception as e:
                         self.socket_request.close()
                         print(e)
-                    self.signal.clear()
+                    self.work_signal.clear()
                     self.server.thread_pool.append(self)
 
         for i in range(self.thread_num):
-            self.thread_pool.append(_Handler(threading.Event(), self))
+            handler = _Handler(threading.Event(), self)
+            self.thread_pool.append(handler)
 
     def handle_socket_request(self, socket_request, client_address):
         if self.thread_pool:
             handler = self.thread_pool.pop()
             handler.set_socket_request(socket_request, client_address)
-            handler.signal.set()
+            handler.work_signal.set()
         else:
             socket_request.close()
+
+    def server_close(self):
+        """ 关闭服务 """
+        self.server_stop()
+        self.socket.close()
 
 
 class BaseSocketHandler:

@@ -1,13 +1,12 @@
 # coding=utf-8
 from httppy import httpserver
-import thread, time
+import thread, time, SimpleHTTPServer, sys
 
 server_address = ('', 7777)
 
 
 class Handler(httpserver.BaseHttpHandler):
     def handle_http_request(self):
-        # global a
         # import time
         # time.sleep(10)
         self.http_response.body = 'hello world!'
@@ -21,8 +20,6 @@ class Handler(httpserver.BaseHttpHandler):
 
 app = httpserver.BaseHttpServer(server_address, Handler)
 
-thread.start_new_thread(app.server_start, ())
-
 print('Server start')
 print(server_address)
-raw_input()
+app.server_start()
