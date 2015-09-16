@@ -2,13 +2,13 @@
 __author__ = 'titorx'
 
 
-from socketserver import BaseSocketHandler, ThreadingTCPServer
+from socketserver import BaseSocketHandler, TreadPoolTCPServer
 import urllib
 import StringIO
 import datetime
 
 
-class BaseHttpServer(ThreadingTCPServer):
+class BaseHttpServer(TreadPoolTCPServer):
     pass
 
 

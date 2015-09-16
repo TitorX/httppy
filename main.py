@@ -1,16 +1,19 @@
 # coding=utf-8
 from httppy import httpserver
-import thread
+import thread, time
 
 server_address = ('', 7777)
 
 
 class Handler(httpserver.BaseHttpHandler):
     def handle_http_request(self):
+        # global a
         # import time
-        # time.sleep(1)
+        # time.sleep(10)
         self.http_response.body = 'hello world!'
-        print(self.http_request.ip)
+        # print(self.http_request.ip)
+        # print(len(self.server.thread_pool))
+        # a = self.server.thread_pool
         # import json
         # print('POST:' + json.dumps(self.http_request.POST, indent=4))
         # print('GET:' + json.dumps(self.http_request.GET, indent=4))

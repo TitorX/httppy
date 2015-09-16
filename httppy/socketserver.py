@@ -24,11 +24,10 @@ class BaseTCPServer:
 
     request_queue_size = 5
 
-    server_loop = True
-
     def __init__(self, server_address, request_handler_class):
         self.server_address = server_address
         self.request_handler_class = request_handler_class
+        self.server_loop = True
 
         self.socket = socket.socket()
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -101,6 +100,56 @@ class ThreadingTCPServer(BaseTCPServer):
                 request_handler_class(self.socket_request, self.client_address, self.server)
 
         self.request_handler_class = _TreadingHandler
+
+
+class TreadPoolTCPServer(BaseTCPServer):
+
+    """
+    基于线程池的TCP服务器
+    """
+
+    thread_num = 1000
+
+    def __init__(self, server_address, request_handler_class):
+        BaseTCPServer.__init__(self, server_address, request_handler_class)
+        self.thread_pool = []
+
+        class _Handler(threading.Thread):
+            def __init__(self, signal, server):
+                threading.Thread.__init__(self)
+                self.signal = signal
+                self.server = server
+                self.socket_request = None
+                self.client_address = None
+                self.start()
+
+            def set_socket_request(self, socket_request, client_address):
+                self.socket_request = socket_request
+                self.client_address = client_address
+
+            def run(self):
+                while True:
+                    self.signal.wait()
+                    try:
+                        request_handler_class(self.socket_request, self.client_address, self.server)
+                        self.socket_request = None
+                        self.client_address = None
+                    except Exception as e:
+                        self.socket_request.close()
+                        print(e)
+                    self.signal.clear()
+                    self.server.thread_pool.append(self)
+
+        for i in range(self.thread_num):
+            self.thread_pool.append(_Handler(threading.Event(), self))
+
+    def handle_socket_request(self, socket_request, client_address):
+        if self.thread_pool:
+            handler = self.thread_pool.pop()
+            handler.set_socket_request(socket_request, client_address)
+            handler.signal.set()
+        else:
+            socket_request.close()
 
 
 class BaseSocketHandler:
