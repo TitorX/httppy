@@ -22,12 +22,11 @@ class BaseTCPServer:
 
     """
 
-    request_queue_size = 5
-
     def __init__(self, server_address, request_handler_class):
         self.server_address = server_address
         self.request_handler_class = request_handler_class
         self.server_loop = True
+        self.request_queue_size = 5
 
         self.socket = socket.socket()
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -111,10 +110,9 @@ class TreadPoolTCPServer(BaseTCPServer):
     基于线程池的TCP服务器
     """
 
-    thread_num = 1000
-
     def __init__(self, server_address, request_handler_class):
         BaseTCPServer.__init__(self, server_address, request_handler_class)
+        self.thread_pool_size = 10
         self.thread_pool = []
 
         class _Handler(threading.Thread):
@@ -142,9 +140,10 @@ class TreadPoolTCPServer(BaseTCPServer):
                         self.socket_request.close()
                         print(e)
                     self.work_signal.clear()
+                    # 工作完成后将自身添加回线程池中
                     self.server.thread_pool.append(self)
 
-        for i in range(self.thread_num):
+        for i in range(self.thread_pool_size):
             handler = _Handler(threading.Event(), self)
             self.thread_pool.append(handler)
 
@@ -161,12 +160,15 @@ class TreadPoolTCPServer(BaseTCPServer):
         self.server_stop()
         self.socket.close()
 
+    def set_thread_pool_size(self, size):
+        """ 设置线程池大小 """
+        self.thread_pool_size = size
+
 
 class BaseSocketHandler:
 
-    recv_num = 1024
-
     def __init__(self, socket_request, client_address, server):
+        self.recv_size = 1024
         self.data = ''
         self.socket_request = socket_request
         self.client_address = client_address
@@ -183,9 +185,9 @@ class BaseSocketHandler:
 
     def recv(self):
         while True:
-            recv = self.socket_request.recv(self.recv_num)
+            recv = self.socket_request.recv(self.recv_size)
             self.data += recv
-            if len(recv) < self.recv_num:
+            if len(recv) < self.recv_size:
                 break
 
     def handle_socket_request(self):
@@ -194,5 +196,5 @@ class BaseSocketHandler:
     def finish(self):
         self.socket_request.close()
 
-    def set_recv_num(self, num):
-        self.recv_num = num
+    def set_recv_num(self, size):
+        self.recv_size = size
