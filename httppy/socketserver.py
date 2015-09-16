@@ -27,6 +27,7 @@ class BaseTCPServer:
         self.request_handler_class = request_handler_class
         self.server_loop = True
         self.request_queue_size = 5
+        self.connect_timeout = 5
 
         self.socket = socket.socket()
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -47,6 +48,7 @@ class BaseTCPServer:
         """ 开启服务 """
         while self.server_loop:
             socket_request, client_address = self.get_request()
+            socket_request.settimeout(self.connect_timeout)
             self.handle_socket_request(socket_request, client_address)
 
     def handle_socket_request(self, socket_request, client_address):
@@ -68,6 +70,9 @@ class BaseTCPServer:
         """ 关闭服务 """
         self.server_stop()
         self.socket.close()
+
+    def set_connect_timeout(self, timeout):
+        self.connect_timeout = timeout
 
 
 class ThreadingTCPServer(BaseTCPServer):

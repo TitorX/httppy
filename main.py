@@ -11,6 +11,7 @@ class Handler(httpserver.BaseHttpHandler):
         # time.sleep(10)
         self.http_response.body = 'hello world!'
         # print(self.http_request.ip)
+        print len(self.server.thread_pool)
         # import json
         # print('POST:' + json.dumps(self.http_request.POST, indent=4))
         # print('GET:' + json.dumps(self.http_request.GET, indent=4))
