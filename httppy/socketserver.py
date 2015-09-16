@@ -100,7 +100,7 @@ class ThreadingTCPServer(BaseTCPServer):
             def run(self):
                 request_handler_class(self.socket_request, self.client_address, self.server)
 
-        self. request_handler_class = _TreadingHandler
+        self.request_handler_class = _TreadingHandler
 
 
 class BaseSocketHandler:
