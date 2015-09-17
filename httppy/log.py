@@ -7,8 +7,3 @@ logging.basicConfig(
     format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
     datefmt='%F %T',
 )
-
-
-socket_server_log = logging.getLogger('socket')
-
-http_server_log = logging.getLogger('http')

@@ -1,4 +1,5 @@
 # coding=utf-8
+# from httppy import log
 from httppy import httpserver
 import thread, time, SimpleHTTPServer, sys
 
@@ -20,7 +21,4 @@ class Handler(httpserver.BaseHttpHandler):
 
 
 app = httpserver.BaseHttpServer(server_address, Handler)
-
-print('Server start')
-print(server_address)
 app.server_start()
