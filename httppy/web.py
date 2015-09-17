@@ -6,7 +6,9 @@ import re
 
 
 class Request(httpserver.HttpRequest):
-    pass
+    def __init__(self):
+        httpserver.HttpRequest.__init__(self)
+        self.url_param = {}
 
 
 class Response(httpserver.HttpResponse):
@@ -54,14 +56,13 @@ class RequestHandler:
     处理UrlRoute分发的请求
     """
 
-    def __init__(self, request, url_param):
+    def __init__(self, request):
         """
         :type request: Request
         :type url_param: dict
         """
         self.request = request
         self.response = Response()
-        self.url_param = url_param
 
         self.setup()
         self.handler()
@@ -108,7 +109,9 @@ class UrlRoute:
         for url, handler in self.route_table.iteritems():
             result = url.match(request.url)
             if result:
-                response = handler(request, result.groupdict()).get_response()
+                setattr(request, 'url_param', result.groupdict())
+                request.url_param = result.groupdict()
+                response = handler(request).get_response()
                 break
 
         if not response:
