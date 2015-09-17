@@ -194,5 +194,5 @@ class BaseSocketHandler:
     def finish(self):
         self.socket_request.close()
 
-    def set_recv_num(self, size):
+    def set_recv_size(self, size):
         self.recv_size = size
