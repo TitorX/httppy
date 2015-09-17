@@ -1,14 +1,7 @@
-class A:
-    def __init__(self):
-        self.name = '123'
+import re
 
-    def get(self):
-        return self.name
+p = '''/(?P<name>[^/]+)/(?P<name1>[^/]+)/'''
 
+s = '/index/hello/'
 
-raw_input()
-for i in xrange(10000):
-    for j in xrange(10000):
-        print(A().get())
-raw_input()
-
+print(re.match(p, s).groupdict())

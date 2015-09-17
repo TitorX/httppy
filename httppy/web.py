@@ -2,6 +2,7 @@
 __author__ = 'titorx'
 
 import httppy.httpserver as httpserver
+import re
 
 
 class Request(httpserver.HttpRequest):
@@ -24,6 +25,8 @@ class WebHandler(httpserver.BaseHttpHandler):
         httpserver.BaseHttpHandler.__init__(self, socket_request, client_address, server)
 
     def handle_http_request(self):
+        if not self.http_request.url.endswith('/'):
+            self.http_request.url += '/'
         return self.url_route.route(self.http_request)
 
 
@@ -51,9 +54,14 @@ class RequestHandler:
     处理UrlRoute分发的请求
     """
 
-    def __init__(self, request=Request()):
+    def __init__(self, request, url_param):
+        """
+        :type request: Request
+        :type url_param: dict
+        """
         self.request = request
         self.response = Response()
+        self.url_param = url_param
 
         self.setup()
         self.handler()
@@ -80,12 +88,29 @@ class UrlRoute:
     """
 
     def __init__(self, route_table):
+        """
+        :type route_table: dict
+        """
+        self.route_table = route_table
+        self.convert_route_table()
+
+    def convert_route_table(self):
+        route_table = {}
+        for url, handler in self.route_table.iteritems():
+            route_table[re.compile(url)] = handler
         self.route_table = route_table
 
-    def route(self, request=Request()):
-        handler = self.route_table.get(request.url)
-        if handler:
-            response = handler(request).get_response()
-        else:
+    def route(self, request):
+        """
+        :type request: Request
+        """
+        response = None
+        for url, handler in self.route_table.iteritems():
+            result = url.match(request.url)
+            if result:
+                response = handler(request, result.groupdict()).get_response()
+                break
+
+        if not response:
             response = Response404()
         return response
