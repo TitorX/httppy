@@ -7,7 +7,6 @@ server_address = ('', 7777)
 class C(web.RequestHandler):
     def handler(self):
         self.response.body = 'hello world!!'
-        print(self.url_param)
 
 
 url = {
