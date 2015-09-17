@@ -1,16 +1,17 @@
 # coding=utf-8
 # from httppy import log
-from httppy import httpserver
+from httppy import web
 import thread, time, SimpleHTTPServer, sys
 
 server_address = ('', 7777)
 
 
-class Handler(httpserver.BaseHttpHandler):
-    def handle_http_request(self):
+class Handler(web.WebHandler):
+    pass
+    # def handle_http_request(self):
         # import time
         # time.sleep(10)
-        self.http_response.body = 'hello world!'
+        # self.http_response.body = 'hello world!'
         # print(self.http_request.ip)
         # print len(self.server.thread_pool)
         # import json
@@ -20,5 +21,12 @@ class Handler(httpserver.BaseHttpHandler):
         # self.http_response.set_cookie('test2', '123', expires=10)
 
 
-app = httpserver.BaseHttpServer(server_address, Handler)
+def p(request):
+    print(request.method)
+    response = web.Response()
+    response.body = 'hello world'
+    return response
+
+url_route = web.UrlRoute({'/': p})
+app = web.WebServer(server_address, Handler, url_route)
 app.server_start()

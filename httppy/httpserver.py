@@ -2,7 +2,7 @@
 __author__ = 'titorx'
 
 
-from socketserver import BaseSocketHandler, TreadPoolTCPServer
+from httppy.socketserver import BaseSocketHandler, TreadPoolTCPServer
 import urllib
 import StringIO
 import datetime
@@ -19,6 +19,7 @@ class HttpRequest:
 
     header 原始报文首部
     body 原始报文主体
+    request_line 原始报文首部中的请求行
     ip port 发起请求者的ip port
     http_version 请求使用的http版本
     method 请求方法
@@ -73,6 +74,23 @@ class HttpResponse:
 
     """
 
+    STATUS = {
+        200: '200 OK',
+        204: '204 No Content',
+        206: '206 Partial Content',
+        301: '301 Moved Permanently',
+        302: '302 Found',
+        303: '303 See Other',
+        304: '304 Not Modified',
+        307: '307 Temporary Redirect',
+        400: '400 Bad Request',
+        401: '401 Unauthorized',
+        403: '403 Forbidden',
+        404: '404 Not Found',
+        500: '500 Internal Server Error',
+        503: '503 Service Unavailable',
+    }
+
     class _Cookie:
 
         """
@@ -107,7 +125,7 @@ class HttpResponse:
 
     def __init__(self):
         self.http_version = 'HTTP/1.1'
-        self.status = '200'
+        self.status = self.STATUS[200]
         self.header = ''
         self.body = ''
         self.META = {
@@ -121,7 +139,12 @@ class HttpResponse:
     def set_cookie(self, key, value, expires=None, path=None, domain=None):
         self.cookie.set_cookie(key, value, expires, path, domain)
 
+    def set_status(self, status_code):
+        """ 通过状态码设定响应状态 """
+        self.status = self.STATUS[status_code]
+
     def make_header(self):
+        """ 生成响应首部 """
         headers = [key + ': ' + value for key, value in self.META.iteritems()]
         set_cookie = self.cookie.get_set_cookie_meta()
         if set_cookie:
@@ -131,7 +154,6 @@ class HttpResponse:
     def get_response(self):
         """ 该方法返回一个字符串形式的http响应 """
         self.make_header()
-
         response_line = ' '.join([self.http_version, self.status])
         response = response_line + '\r\n' + self.header + '\r\n\r\n' + self.body
         return response
@@ -147,18 +169,20 @@ class BaseHttpHandler(BaseSocketHandler):
 
     def __init__(self, socket_request, client_address, server):
         self.http_request = HttpRequest()
-        self.http_response = HttpResponse()
         BaseSocketHandler.__init__(self, socket_request, client_address, server)
 
     def handle_socket_request(self):
         self.parse_http()
         self.server.logger.info('[%s %s]' % (self.http_request.ip, self.http_request.request_line))
-        self.handle_http_request()
-        self.send_http_response()
+        http_response = self.handle_http_request()
+        self.send_http_response(http_response)
 
     def handle_http_request(self):
-        """ 由用户进行重载 对http request进行处理 """
-        pass
+        """
+        由用户进行重载 对http request进行处理
+            该方法必须返回一个HttpResponse对象
+        """
+        return HttpResponse()
 
     def parse_http(self):
         """ 解析http """
@@ -258,5 +282,5 @@ class BaseHttpHandler(BaseSocketHandler):
                 post = posts.split('=')
                 self.http_request.POST[post[0]] = post[1]
 
-    def send_http_response(self):
-        self.socket_request.sendall(self.http_response.get_response())
+    def send_http_response(self, http_response):
+        self.socket_request.sendall(http_response.get_response())

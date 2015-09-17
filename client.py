@@ -31,8 +31,8 @@ def con(name):
 
 threads = []
 start = time.time()
-for i in range(10000):
-    t = threading.Thread(target=con, args=('''GET / HTTP/1.1
+for i in range(100):
+    t = threading.Thread(target=con, args=('''GET /hello/world?123=123 HTTP/1.1
 Host: localhost:7777
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:40.0) Gecko/20100101 Firefox/40.0
 Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
