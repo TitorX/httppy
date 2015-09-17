@@ -59,7 +59,6 @@ class RequestHandler:
     def __init__(self, request):
         """
         :type request: Request
-        :type url_param: dict
         """
         self.request = request
         self.response = Response()
