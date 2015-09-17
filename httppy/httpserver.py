@@ -6,6 +6,7 @@ from socketserver import BaseSocketHandler, TreadPoolTCPServer
 import urllib
 import StringIO
 import datetime
+from log import http_server_log as log
 
 
 class BaseHttpServer(TreadPoolTCPServer):
@@ -55,6 +56,7 @@ class HttpRequest:
         self.ip = ''
         self.port = None
         self.http_version = ''
+        self.request_line = ''
         self.method = ''
         self.url = ''
         self.get_string = ''
@@ -151,6 +153,7 @@ class BaseHttpHandler(BaseSocketHandler):
 
     def handle_socket_request(self):
         self.parse_http()
+        log.info('[%s %s]' % (self.http_request.ip, self.http_request.request_line))
         self.handle_http_request()
         self.send_http_response()
 
@@ -179,6 +182,7 @@ class BaseHttpHandler(BaseSocketHandler):
         header_lines = self.http_request.header.splitlines()
         # 解析请求行
         request_line = header_lines[0]
+        self.http_request.request_line = request_line
         request_line = request_line.split()
         self.http_request.method = request_line[0]
 

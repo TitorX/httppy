@@ -3,6 +3,7 @@ __author__ = 'titorx'
 
 import socket
 import threading
+from log import socket_server_log as log
 
 
 class BaseTCPServer:
@@ -46,6 +47,7 @@ class BaseTCPServer:
 
     def server_start(self):
         """ 开启服务 """
+        log.info('Server start')
         while self.server_loop:
             socket_request, client_address = self.get_request()
             socket_request.settimeout(self.connect_timeout)
@@ -143,7 +145,7 @@ class TreadPoolTCPServer(BaseTCPServer):
                         self.client_address = None
                     except Exception as e:
                         self.socket_request.close()
-                        print(e)
+                        log.warn(e)
                     self.work_signal.clear()
                     # 工作完成后将自身添加回线程池中
                     self.server.thread_pool.append(self)
