@@ -45,14 +45,31 @@ class WebServer(httpserver.BaseHttpServer):
         return self._Handler(self, self.url_route)
 
 
-class WebRequestHandler:
+class RequestHandler:
 
     """
     处理UrlRoute分发的请求
     """
 
-    def __init__(self):
+    def __init__(self, request=Request()):
+        self.request = request
+        self.response = Response()
+
+        self.setup()
+        self.handler()
+        self.finish()
+
+    def setup(self):
         pass
+
+    def handler(self):
+        pass
+
+    def finish(self):
+        pass
+
+    def get_response(self):
+        return self.response
 
 
 class UrlRoute:
@@ -68,7 +85,7 @@ class UrlRoute:
     def route(self, request=Request()):
         handler = self.route_table.get(request.url)
         if handler:
-            response = handler(request)
+            response = handler(request).get_response()
         else:
             response = Response404()
         return response

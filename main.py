@@ -4,12 +4,11 @@ from httppy import web
 server_address = ('', 7777)
 
 
-def p(request):
-    print(request.method)
-    response = web.Response()
-    response.body = 'hello world'
-    return response
+class C(web.RequestHandler):
+    def handler(self):
+        self.response.body = 'hello world!!'
 
-url_route = web.UrlRoute({'/': p})
+
+url_route = web.UrlRoute({'/': C})
 app = web.WebServer(server_address, url_route)
 app.server_start()
