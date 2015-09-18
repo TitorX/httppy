@@ -89,15 +89,15 @@ class UrlRoute:
 
     def __init__(self, route_table):
         """
-        :type route_table: dict
+        :type route_table: list
         """
         self.route_table = route_table
         self.convert_route_table()
 
     def convert_route_table(self):
-        route_table = {}
-        for url, handler in self.route_table.iteritems():
-            route_table[re.compile(url)] = handler
+        route_table = []
+        for url, handler in self.route_table:
+            route_table.append((re.compile(url), handler))
         self.route_table = route_table
 
     def route(self, request):
@@ -105,10 +105,9 @@ class UrlRoute:
         :type request: Request
         """
         response = None
-        for url, handler in self.route_table.iteritems():
+        for url, handler in self.route_table:
             result = url.match(request.url)
             if result:
-                setattr(request, 'url_param', result.groupdict())
                 request.url_param = result.groupdict()
                 response = handler(request).get_response()
                 break
