@@ -1,7 +1,13 @@
-import re
+f = open('mime.types')
+s = f.read()
 
-p = '''/(?P<name>[^/]+)/(?P<name1>[^/]+)/'''
+mime = {}
 
-s = '/index/hello/'
+for i in s.splitlines():
+    for j in i[:-1].split()[1:]:
+        mime[j] = i[:-1].split()[0]
 
-print(re.match(p, s).groupdict())
+import json
+
+print(json.dumps(mime, indent=4))
+print(len(mime))

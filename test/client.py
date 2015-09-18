@@ -25,14 +25,14 @@ def con(name):
     #
     # ''')
     max_len = 1024
-    s.recv(max_len)
+    print(s.recv(max_len))
     s.close()
     ok += 1
 
 threads = []
 start = time.time()
 for i in range(1):
-    t = threading.Thread(target=con, args=('''GET /hello/world?123=123 HTTP/1.1
+    t = threading.Thread(target=con, args=('''GET /static_handler/../manage.py/?123=123 HTTP/1.1
 Host: localhost:7777
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:40.0) Gecko/20100101 Firefox/40.0
 Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
