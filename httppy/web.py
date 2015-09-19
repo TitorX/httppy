@@ -1,7 +1,7 @@
 # coding=utf-8
 __author__ = 'titorx'
 
-import httppy.httpserver as httpserver
+import httpserver
 import re
 
 
@@ -75,6 +75,9 @@ class RequestHandler:
 
     def finish(self):
         pass
+
+    def set_response(self, content):
+        self.response.set_body(content)
 
     def get_response(self):
         return self.response

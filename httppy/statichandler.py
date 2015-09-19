@@ -1,6 +1,6 @@
 # coding=utf-8
 __author__ = 'titorx'
-from httppy import web
+import web
 import os
 
 

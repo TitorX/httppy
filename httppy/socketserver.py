@@ -5,6 +5,7 @@ import socket
 import threading
 import logging
 import os
+import traceback
 
 
 class BaseTCPServer(object):
@@ -111,9 +112,9 @@ class TreadPoolTCPServer(BaseTCPServer):
                     self.handle_request()
                     self.socket_request = None
                     self.client_address = None
-                except Exception as e:
+                except:
                     self.socket_request.close()
-                    self.server.logger.warn(e)
+                    self.server.logger.warn(traceback.format_exc())
                 self.work_signal.clear()
                 # 工作完成后将自身添加回线程池中
                 self.server.thread_pool.append(self)

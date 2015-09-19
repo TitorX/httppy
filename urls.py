@@ -9,4 +9,3 @@ urls = [
 ]
 
 urls += demoapp.urls.url
-

@@ -2,7 +2,7 @@
 __author__ = 'titorx'
 
 
-from httppy.socketserver import BaseSocketHandler, TreadPoolTCPServer
+from socketserver import BaseSocketHandler, TreadPoolTCPServer
 import urllib
 import StringIO
 import datetime
@@ -142,6 +142,10 @@ class HttpResponse:
     def set_status(self, status_code):
         """ 通过状态码设定响应状态 """
         self.status = self.STATUS[status_code]
+
+    def set_body(self, content):
+        """ 设置响应正文 """
+        self.body = content
 
     def make_header(self):
         """ 生成响应首部 """
