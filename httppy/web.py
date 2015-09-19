@@ -76,9 +76,6 @@ class RequestHandler:
     def finish(self):
         pass
 
-    def set_response(self, content):
-        self.response.set_body(content)
-
     def get_response(self):
         return self.response
 
