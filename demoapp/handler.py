@@ -6,7 +6,7 @@ from httppy.template import render
 
 class Index(web.RequestHandler):
     def handler(self):
-        self.response.set_body('welcome httppy')
+        self.response.redirect('/static/js.js')
 
 
 class UrlParam(web.RequestHandler):

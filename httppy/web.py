@@ -12,7 +12,12 @@ class Request(httpserver.HttpRequest):
 
 
 class Response(httpserver.HttpResponse):
-    pass
+    def redirect(self, redirect_to):
+        """
+        :type redirect_to: str
+        """
+        self.set_status(302)
+        self.set_header('Location', redirect_to)
 
 
 class Response404(Response):
