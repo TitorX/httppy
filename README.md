@@ -26,8 +26,6 @@ Project
 待完成
 > 完善http响应的各种状态设置
 
-> 制作完整demo
-
 > 编写完整的文档
 
 > 完善README.md

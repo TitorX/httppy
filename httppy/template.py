@@ -14,7 +14,10 @@ def get_template_render(path):
             self.env = jinja2.Environment(loader=jinja2.FileSystemLoader(self.path))
 
         def render(self, template, *args, **kwargs):
-            return self.env.get_template(template).render(args=args, kwargs=kwargs)
+            content = self.env.get_template(template).render(*args, **kwargs)
+            if type(content) is unicode:
+                content = content.encode('utf-8')
+            return content
 
     setattr(Render, 'path', os.path.abspath(path))
     return Render()

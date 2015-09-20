@@ -128,6 +128,7 @@ def static_handler(path):
                 # 发送文件
                 with open(file_path) as f:
                     self.response.set_body(f.read())
+                    self.response.set_header('Content-Length', str(len(self.response.body)))
                 # 获取文件的类型
                 mime = MIME.get(os.path.basename(file_path).split('.')[-1], None)
                 if mime:

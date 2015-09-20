@@ -12,6 +12,10 @@ class Request(httpserver.HttpRequest):
 
 
 class Response(httpserver.HttpResponse):
+    def __init__(self):
+        httpserver.HttpResponse.__init__(self)
+        self.META['Content-Type'] = "text/html"
+
     def redirect(self, redirect_to):
         """
         :type redirect_to: str
