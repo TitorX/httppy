@@ -132,7 +132,7 @@ def static_handler(path):
                 # 获取文件的类型
                 mime = MIME.get(os.path.basename(file_path).split('.')[-1], None)
                 if mime:
-                    self.response.set_header('Content-type', mime)
+                    self.response.set_header('Content-Type', mime)
             else:
                 self.response = web.Response404()
 
