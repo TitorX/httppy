@@ -1,6 +1,8 @@
 # coding=utf-8
 __author__ = 'titorx'
 
+import httppy
+
 
 # 设置模板系统 ########################################
 from httppy import template
@@ -8,13 +10,16 @@ template.render = template.get_template_render('template')
 ######################################################
 
 # ####################################################
-from httppy import web
 import urls
 
-server_address = ('', 7777)
+server_address = [
+    ('', 7777),
+    ('', 7778),
+    ('', 7779)
+]
 
-url_route = web.UrlRoute(urls.urls)
 
-app = web.WebServer(server_address, url_route)
-app.server_start()
+manager = httppy.Manager(server_address, urls.urls)
+manager.server_start()
+
 ######################################################
