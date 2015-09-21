@@ -77,7 +77,7 @@ httppy的不足
     |   +-----------------+
     |   |   HttpHandler() |
     |   +-----------------+
-    |            |parse_http -> Request 在http协议层对解析http携带的内容 url get post file ... 存储在Request对象中
+    |            |parse_http -> Request 在http协议层解析生成Request对象
     |            v
     |+------------------------+
     ||  Web.RequestHandler()  |
