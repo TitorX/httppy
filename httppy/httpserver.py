@@ -71,7 +71,6 @@ class HttpResponse:
 
     """
     对http请求的响应对象
-
     """
 
     STATUS = {
@@ -214,7 +213,7 @@ class BaseHttpHandler(BaseSocketHandler):
         self.http_request.method = request_line[0]
 
         request = request_line[1].split('?')
-        # 当url中没有?时 如:/index/index 添加一个''使get_string为''
+        # 当url中没有?时 如:/index/index 添加一个空字符串('')使get_string为空字符串('')
         request.append('')
         self.http_request.url, self.http_request.get_string = request[0], urllib.unquote(request[1])
 

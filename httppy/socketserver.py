@@ -26,6 +26,9 @@ class BaseTCPServer(object):
     """
 
     def __init__(self, server_address, request_handler_class):
+        """
+        :type server_address: (str, int)
+        """
         self.logger = logging.getLogger(str(os.getpid()))
         self.server_address = server_address
         self.request_handler_class = request_handler_class
@@ -35,9 +38,6 @@ class BaseTCPServer(object):
 
         self.socket = socket.socket()
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-
-        self.server_bind()
-        self.server_listen()
 
     def set_connect_timeout(self, timeout):
         """ 设置套接字连接超时时间 """
@@ -54,8 +54,12 @@ class BaseTCPServer(object):
 
     def server_start(self):
         """ 开启服务 """
+        self.server_bind()
         self.logger.info('Server start')
+
+        self.server_listen()
         self.logger.info('bind:' + str(self.server_address))
+
         while self.server_loop:
             socket_request, client_address = self.get_request()
             socket_request.settimeout(self.connect_timeout)
@@ -133,7 +137,10 @@ class TreadPoolTCPServer(BaseTCPServer):
         self.thread_pool = []
 
     def set_thread_pool_size(self, size):
-        """ 设置线程池大小 """
+        """
+        设置线程池大小
+        :type size: int
+        """
         self.thread_pool_size = size
 
     def build_thread_pool(self):
@@ -167,6 +174,10 @@ class TreadPoolTCPServer(BaseTCPServer):
 class BaseSocketHandler:
 
     def __init__(self, socket_request, client_address, server):
+        """
+        :type socket_request: socket._socketobject
+        :param client_address: (str, int)
+        """
         self.recv_size = 1024
         self.data = ''
         self.socket_request = socket_request
@@ -175,7 +186,8 @@ class BaseSocketHandler:
         self.setup()
         try:
             self.recv()
-            self.handle_socket_request()
+            if self.data != '':
+                self.handle_socket_request()
         finally:
             self.finish()
 
