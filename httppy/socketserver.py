@@ -180,6 +180,7 @@ class BaseSocketHandler:
         """
         self.recv_size = 1024
         self.data = ''
+        self.result = ''
         self.socket_request = socket_request
         self.client_address = client_address
         self.server = server
@@ -205,6 +206,7 @@ class BaseSocketHandler:
         pass
 
     def finish(self):
+        self.socket_request.sendall(self.result)
         self.socket_request.close()
 
     def set_recv_size(self, size):

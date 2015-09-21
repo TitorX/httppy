@@ -65,6 +65,38 @@ httppy的不足
 
 
 ## 框架工作模式
+一次请求的处理流程
+
+    |            |connect 客户端套接字连入
+    |            v
+    |   +-----------------+
+    |   | SocketHandler() |
+    |   +-----------------+
+    |            |recv -> data 在TCP套接字层面接受数据
+    |            v
+    |   +-----------------+
+    |   |   HttpHandler() |
+    |   +-----------------+
+    |            |parse_http -> Request 在http协议层对解析http携带的内容 url get post file ... 存储在Request对象中
+    |            v
+    |+------------------------+
+    ||  Web.RequestHandler()  |
+    |+------------------------+
+    |            |handler -> Response 用户对请求进行处理并生成成Response对象作为响应
+    |            v
+    |   +----------------+
+    |   |  HttpHandler() |
+    |   +----------------+
+    |            |get_response -> result 将Response对象转化为套接字数据
+    |            v
+    |   +-----------------+
+    |   | SocketHandler() |
+    |   +-----------------+
+    |            |sendall 将数据发送给客户端
+    |            v
+
+
+
 ## URL配置
 ## 服务器配置
 ## 模板系统

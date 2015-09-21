@@ -178,7 +178,7 @@ class BaseHttpHandler(BaseSocketHandler):
         self.parse_http()
         self.server.logger.info('[%s %s]' % (self.http_request.ip, self.http_request.request_line))
         http_response = self.handle_http_request()
-        self.send_http_response(http_response)
+        self.get_http_response(http_response)
 
     def handle_http_request(self):
         """
@@ -285,5 +285,5 @@ class BaseHttpHandler(BaseSocketHandler):
                 post = posts.split('=')
                 self.http_request.POST[post[0]] = post[1]
 
-    def send_http_response(self, http_response):
-        self.socket_request.sendall(http_response.get_response())
+    def get_http_response(self, http_response):
+        self.result = http_response.get_response()
