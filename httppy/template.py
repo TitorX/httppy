@@ -1,5 +1,4 @@
-__author__ = 'titorx'
-
+# coding=utf-8
 import jinja2
 import os
 

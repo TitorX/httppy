@@ -1,6 +1,4 @@
 # coding=utf-8
-__author__ = 'titorx'
-
 import socket
 import threading
 import logging
@@ -40,7 +38,10 @@ class BaseTCPServer(object):
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
     def set_connect_timeout(self, timeout):
-        """ 设置套接字连接超时时间 """
+        """
+        设置套接字连接超时时间
+        :type timeout: int
+        """
         self.connect_timeout = timeout
 
     def server_bind(self):
@@ -70,7 +71,11 @@ class BaseTCPServer(object):
         return self.socket.accept()
 
     def handle_socket_request(self, socket_request, client_address):
-        """ 处理套接字请求 """
+        """
+        处理套接字请求
+        :type socket_request: socket._socketobject
+        :type client_address: (str, int)
+        """
         self.request_handler_class(socket_request, client_address, self)
 
     def server_stop(self):
@@ -176,7 +181,7 @@ class BaseSocketHandler:
     def __init__(self, socket_request, client_address, server):
         """
         :type socket_request: socket._socketobject
-        :param client_address: (str, int)
+        :type client_address: (str, int)
         """
         self.recv_size = 1024
         self.data = ''

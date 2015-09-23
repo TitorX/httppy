@@ -1,7 +1,4 @@
 # coding=utf-8
-__author__ = 'titorx'
-
-
 from socketserver import BaseSocketHandler, TreadPoolTCPServer
 import urllib
 import StringIO

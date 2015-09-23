@@ -1,6 +1,4 @@
 # coding=utf-8
-__author__ = 'titorx'
-
 import httpserver
 import re
 

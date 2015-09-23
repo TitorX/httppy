@@ -1,6 +1,4 @@
 # coding=utf-8
-__author__ = 'titorx'
-
 import httppy
 import urls
 from settings import conf, server_address

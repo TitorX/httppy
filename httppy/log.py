@@ -1,5 +1,3 @@
-__author__ = 'titorx'
-
 import logging
 
 logging.basicConfig(

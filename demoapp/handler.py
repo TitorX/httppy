@@ -22,7 +22,7 @@ class Template(web.RequestHandler):
         # 模板系统使用jinja2
         # template中仅仅是对jinja2的包装
         import datetime
-        self.response.set_body(render.render('template.html', {'time': datetime.datetime.now()}))
+        self.response.set_body(render.render('template.html', {'time': '中文'}))
 
 
 class Redirect(web.RequestHandler):
