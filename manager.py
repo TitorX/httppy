@@ -32,17 +32,23 @@ class Manager:
             self.servers.append(Process(target=app.server_start))
 
     def setup(self):
-        """ 对服务器进行初始化 """
-        for server in self.servers:
-            self.set_server(server, 'connect_timeout', self.kwargs.get('connect_timeout'))
-            self.set_server(server, 'request_queue_size', self.kwargs.get('request_queue_size'))
-            self.set_server(server, 'thread_pool_size', self.kwargs.get('thread_pool_size'))
+        """ 对框架进行初始化 """
 
-    @staticmethod
-    def set_server(server, key, value):
-        """ 对服务器进行设置 """
-        if value:
-            setattr(server, key, value)
+        # 服务器设置
+        def set_server(setup_server, key, value):
+            """ 对服务器进行设置 """
+            if value:
+                setattr(setup_server, key, value)
+
+        for server in self.servers:
+            set_server(server, 'connect_timeout', self.kwargs.get('connect_timeout'))
+            set_server(server, 'request_queue_size', self.kwargs.get('request_queue_size'))
+            set_server(server, 'thread_pool_size', self.kwargs.get('thread_pool_size'))
+        ####################################################################################
+        # 404状态页
+        page_404 = self.kwargs.get('404page')
+        if page_404:
+            web.Response404 = page_404
 
     def server_start(self):
         for server in self.servers:
