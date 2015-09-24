@@ -44,6 +44,10 @@ class Response404(Response):
     def __init__(self):
         Response.__init__(self)
         self.set_status(404)
+        self.handler()
+
+    def handler(self):
+        pass
 
 
 class WebHandler(httpserver.BaseHttpHandler):
