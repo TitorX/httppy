@@ -40,7 +40,7 @@ httppy的不足
     
     
     class Index(web.RequestHandler):
-        def handler(self):
+        def handle(self):
             self.response.set_body('Hello httppy!')
 
     url = [
@@ -150,7 +150,7 @@ httppy的不足
 > 根据传入的request url在用户预先写好的url匹配表中匹配  
 > 实例化相应的RequestHandler对象 将request传给他  
 6. RequestHandler  
-> 用户继承对象并重载handler方法进行处理  
+> 用户继承对象并重载handle方法进行处理  
 > 产生相应的Response对象  
 7. HttpHandler层  
 > 将Response解析为完整可发送的对象  
@@ -224,7 +224,7 @@ httppy仅处理动态的请求
 ## 响应的生成
 
 用户重载web.RequestHandler来对一个request进行处理、响应  
-重载handler方法实际进行操作  
+重载handle方法实际进行操作  
 该对象具备两个重要的属性  
 
     self.request
@@ -275,7 +275,7 @@ httppy.template.py中对jinja2进行了一些简单的包装
 
     from httppy.template import render
     class Template(web.RequestHandler):
-        def handler(self):
+        def handle(self):
             # template中的render对象用于进行模板渲染
             # 模板系统使用jinja2
             # template中仅仅是对jinja2的包装
@@ -299,7 +299,7 @@ httppy框架没有对ORM进行整合
     
     
     class Index(web.RequestHandler):
-        def handler(self):
+        def handle(self):
             self.response.set_body('Hello httppy!')
 
     url = [

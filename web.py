@@ -107,13 +107,13 @@ class RequestHandler:
         self.response = Response()
 
         self.setup()
-        self.handler()
+        self.handle()
         self.finish()
 
     def setup(self):
         pass
 
-    def handler(self):
+    def handle(self):
         pass
 
     def finish(self):
@@ -129,6 +129,8 @@ class UrlRoute:
     url路由
         负责将对应url请求分发给对应handler
     """
+
+    response404 = Response404
 
     def __init__(self, route_table):
         """
@@ -156,5 +158,5 @@ class UrlRoute:
                 break
 
         if not response:
-            response = Response404()
+            response = self.response404()
         return response

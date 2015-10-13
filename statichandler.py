@@ -120,7 +120,7 @@ def static_handler(path):
 
         static_dir_path = ''
 
-        def handler(self):
+        def handle(self):
             file_path = os.path.abspath(os.path.join(self.static_dir_path, self.request.url_param['path'].rstrip('/')))
             # 判断目标文件是否位于指定的目录下 以及 目标文件是否存在
             if (self.static_dir_path in file_path) and os.path.isfile(file_path):

@@ -19,7 +19,7 @@ class BaseTCPServer(object):
           |
           |   loop  ←-------      ←
           ↓                       ↑
-        get_request() → handler()
+        get_request() → handle()
 
     """
 
@@ -30,19 +30,11 @@ class BaseTCPServer(object):
         self.logger = logging.getLogger(str(os.getpid()))
         self.server_address = server_address
         self.request_handler_class = request_handler_class
-        self.server_loop = True
         self.request_queue_size = 5
         self.connect_timeout = 5
 
         self.socket = socket.socket()
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-
-    def set_connect_timeout(self, timeout):
-        """
-        设置套接字连接超时时间
-        :type timeout: int
-        """
-        self.connect_timeout = timeout
 
     def server_bind(self):
         """ 套接字对象绑定到服务器端口 """
@@ -56,12 +48,12 @@ class BaseTCPServer(object):
     def server_start(self):
         """ 开启服务 """
         self.server_bind()
-        self.logger.info('Server start')
+        self.logger.info('Server start. pid:%s' % str(os.getpid()))
 
         self.server_listen()
         self.logger.info('bind:' + str(self.server_address))
 
-        while self.server_loop:
+        while 1:
             socket_request, client_address = self.get_request()
             socket_request.settimeout(self.connect_timeout)
             self.handle_socket_request(socket_request, client_address)
@@ -78,17 +70,8 @@ class BaseTCPServer(object):
         """
         self.request_handler_class(socket_request, client_address, self)
 
-    def server_stop(self):
-        """ 停止服务 """
-        self.server_loop = False
-        s = socket.socket()
-        s.settimeout(0.1)
-        s.connect(self.server_address)
-        s.close()
-
     def server_close(self):
         """ 关闭服务 """
-        self.server_stop()
         self.socket.close()
 
 
@@ -140,13 +123,6 @@ class TreadPoolTCPServer(BaseTCPServer):
         # 线程池的最大线程数
         self.thread_pool_size = 10
         self.thread_pool = []
-
-    def set_thread_pool_size(self, size):
-        """
-        设置线程池大小
-        :type size: int
-        """
-        self.thread_pool_size = size
 
     def build_thread_pool(self):
         """ 创建线程池 """
@@ -213,6 +189,3 @@ class BaseSocketHandler:
     def finish(self):
         self.socket_request.sendall(self.result)
         self.socket_request.close()
-
-    def set_recv_size(self, size):
-        self.recv_size = size

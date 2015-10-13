@@ -48,7 +48,7 @@ class Manager:
         # 404状态页
         page_404 = self.kwargs.get('404page')
         if page_404:
-            web.Response404 = page_404
+            web.UrlRoute.response404 = page_404
 
     def server_start(self):
         for server in self.servers:
