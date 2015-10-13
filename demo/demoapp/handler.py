@@ -5,7 +5,7 @@ from httppy.template import render
 
 class Index(web.RequestHandler):
     def handle(self):
-        self.response.set_body(render.render('index.html', {}))
+        self.response.set_body(render('index.html', {}))
 
 
 class UrlParam(web.RequestHandler):
@@ -21,7 +21,7 @@ class Template(web.RequestHandler):
         # template中仅仅是对jinja2的包装
         import datetime
 
-        self.response.set_body(render.render('template.html', {
+        self.response.set_body(render('template.html', {
             'time': datetime.datetime.now(),
             'cn': '欢迎',
         }))

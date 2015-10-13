@@ -5,7 +5,7 @@ import os
 
 def get_template_render(path):
 
-    class Render:
+    class _Render:
 
         path = ''
 
@@ -18,7 +18,11 @@ def get_template_render(path):
                 content = content.encode('utf-8')
             return content
 
-    setattr(Render, 'path', os.path.abspath(path))
-    return Render()
+    setattr(_Render, 'path', os.path.abspath(path))
+    return _Render()
 
-render = get_template_render('template')
+Render = get_template_render('template')
+
+
+def render(template, *args, **kwargs):
+    return Render.render(template, *args, **kwargs)

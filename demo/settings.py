@@ -1,9 +1,5 @@
 # coding=utf-8
-
-# 设置模板系统 #############################################
-from httppy import template
-template.render = template.get_template_render('template')
-###########################################################
+import os
 
 
 conf = {
@@ -13,6 +9,8 @@ conf = {
     'request_queue_size': 5,
     # 设定每条进程的线程池大小
     'thread_pool_size': 10,
+    # 设置模板系统
+    'template_path': os.path.join(os.getcwd(), 'httppy/demo/template'),
 }
 
 # 要启动的服务器配置

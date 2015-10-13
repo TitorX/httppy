@@ -22,6 +22,7 @@ class Manager:
 
         self.create_url_route()
         self.create_servers()
+        self.setup()
 
     def create_url_route(self):
         self.url_route = web.UrlRoute(self.urls)
@@ -40,6 +41,7 @@ class Manager:
             thread_pool_size 线程池线程数
             404page 404页面
             500page 500页面
+            template_path 模板目录
         """
 
         # 服务器设置
@@ -62,6 +64,12 @@ class Manager:
         page_500 = self.kwargs.get('500page')
         if page_500:
             web.UrlRoute.response404 = page_500
+        ####################################################################################
+        # 模板目录
+        template_path = self.kwargs.get('template_path')
+        if template_path:
+            import template
+            template.Render = template.get_template_render(template_path)
 
     def server_start(self):
         for server in self.servers:
