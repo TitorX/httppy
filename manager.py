@@ -39,6 +39,7 @@ class Manager:
             request_queue_size 套接字listen监听队列
             thread_pool_size 线程池线程数
             404page 404页面
+            500page 500页面
         """
 
         # 服务器设置
@@ -56,6 +57,11 @@ class Manager:
         page_404 = self.kwargs.get('404page')
         if page_404:
             web.UrlRoute.response404 = page_404
+        ####################################################################################
+        # 500状态页
+        page_500 = self.kwargs.get('500page')
+        if page_500:
+            web.UrlRoute.response404 = page_500
 
     def server_start(self):
         for server in self.servers:
