@@ -1,6 +1,7 @@
 # coding=utf-8
 import httpserver
 import re
+import traceback
 
 
 class Request(httpserver.HttpRequest):
@@ -50,6 +51,21 @@ class Response404(Response):
         pass
 
 
+class Response500(Response):
+
+    """
+    500响应类
+    """
+
+    def __init__(self):
+        Response.__init__(self)
+        self.set_status(500)
+        self.handler()
+
+    def handler(self):
+        pass
+
+
 class WebHandler(httpserver.BaseHttpHandler):
 
     """
@@ -69,7 +85,7 @@ class WebHandler(httpserver.BaseHttpHandler):
     def handle_http_request(self):
         if not self.http_request.url.endswith('/'):
             self.http_request.url += '/'
-        return self.url_route.route(self.http_request)
+        return self.url_route.route(self.http_request, self.server)
 
 
 class WebServer(httpserver.BaseHttpServer):
@@ -99,11 +115,14 @@ class RequestHandler:
     处理UrlRoute分发的请求
     """
 
-    def __init__(self, request):
+    def __init__(self, request, server):
         """
         :type request: Request
+        :type server: WebServer
         """
         self.request = request
+        self.server = server
+        self.logger = self.server.logger
         self.response = Response()
 
         self.setup()
@@ -131,6 +150,7 @@ class UrlRoute:
     """
 
     response404 = Response404
+    response500 = Response500
 
     def __init__(self, route_table):
         """
@@ -145,16 +165,22 @@ class UrlRoute:
             route_table.append((re.compile(url), handler))
         self.route_table = route_table
 
-    def route(self, request):
+    def route(self, request, server):
         """
         :type request: Request
+        :type server: WebServer
         """
         response = None
         for url, handler in self.route_table:
             result = url.match(request.url)
             if result:
                 request.url_param = result.groupdict()
-                response = handler(request).get_response()
+                try:
+                    response = handler(request, server).get_response()
+                except Exception as e:
+                    # handler出错返回500错误
+                    server.logger.warn('\n'.join([str(e), traceback.format_exc()]))
+                    response = self.response500()
                 break
 
         if not response:

@@ -32,7 +32,14 @@ class Manager:
             self.servers.append(Process(target=app.server_start))
 
     def setup(self):
-        """ 对框架进行初始化 """
+        """
+        对框架进行初始化
+            可配置项
+            connect_timeout 套接字连接超时时间
+            request_queue_size 套接字listen监听队列
+            thread_pool_size 线程池线程数
+            404page 404页面
+        """
 
         # 服务器设置
         def set_server(setup_server, key, value):
