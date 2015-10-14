@@ -125,7 +125,8 @@ class HttpResponse:
         self.header = ''
         self.body = ''
         self.META = {
-            'Server': 'httppy/0.1'
+            'Server': 'httppy/0.1',
+            'Connection': 'close',
         }
         self.cookie = self._Cookie()
 
