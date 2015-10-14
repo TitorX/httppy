@@ -8,4 +8,4 @@ sys.setdefaultencoding('utf-8')
 
 
 __author__ = 'titorx'
-__version__ = 'v0.1'
+__version__ = 'httppy/v0.1'

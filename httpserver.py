@@ -3,6 +3,7 @@ from socketserver import BaseSocketHandler, TreadPoolTCPServer
 import urllib
 import StringIO
 import datetime
+from __init__ import __version__
 
 
 class BaseHttpServer(TreadPoolTCPServer):
@@ -125,13 +126,17 @@ class HttpResponse:
         self.header = ''
         self.body = ''
         self.META = {
-            'Server': 'httppy/0.1',
-            'Connection': 'close',
+            'SERVER': __version__,
+            'CONNECTION': 'close',  # 默认关闭长连接
         }
         self.cookie = self._Cookie()
 
     def set_header(self, key, value):
-        self.META[key] = value
+        """
+        :type key: str
+        :type value: str
+        """
+        self.META[key.upper()] = value
 
     def set_cookie(self, key, value, expires=None, path=None, domain=None):
         self.cookie.set_cookie(key, value, expires, path, domain)
