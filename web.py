@@ -24,8 +24,6 @@ class Response(httpserver.HttpResponse):
 
     def __init__(self):
         httpserver.HttpResponse.__init__(self)
-        # 默认返回内容的类型为html页面
-        self.META['Content-Type'] = "text/html"
 
     def redirect(self, redirect_to):
         """
@@ -124,6 +122,8 @@ class RequestHandler:
         self.server = server
         self.logger = self.server.logger
         self.response = Response()
+        # 默认返回内容的类型为html页面
+        self.response.set_header('Content-Type', "text/html")
 
         self.setup()
         self.handle()
