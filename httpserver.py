@@ -102,6 +102,7 @@ class HttpResponse:
             设置cookie
             """
 
+            value = urllib.quote(value)
             self.COOKIE[key] = '='.join([key, value]) + ';'
 
             if expires:
@@ -242,7 +243,7 @@ class BaseHttpHandler(BaseSocketHandler):
         if cookie_string:
             for cookies in cookie_string.split('; '):
                 cookie = cookies.split('=')
-                self.http_request.COOKIE[cookie[0]] = cookie[1]
+                self.http_request.COOKIE[cookie[0]] = urllib.unquote(cookie[1])
 
     def parse_post(self):
         """ 解析post得到的参数以及文件 """
