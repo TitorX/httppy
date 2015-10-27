@@ -284,10 +284,10 @@ class BaseHttpHandler(BaseSocketHandler):
                     }
 
         else:
-            body = urllib.unquote(self.http_request.body[:content_length])
+            body = self.http_request.body[:content_length]
             for posts in body.split('&'):
                 post = posts.split('=')
-                self.http_request.POST[post[0]] = post[1]
+                self.http_request.POST[post[0]] = urllib.unquote(post[1])
 
     def get_http_response(self, http_response):
         self.result = http_response.get_response()
